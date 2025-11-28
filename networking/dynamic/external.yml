@@ -1,0 +1,14 @@
+http:
+  routers:
+    whoami-external:
+      rule: "Host(`external.nettleship.net`)"
+      entrypoints:
+        - websecure
+      service: whoami
+      tls: {}
+
+  services:
+    whoami:
+      loadBalancer:
+        servers:
+          - url: "http://whoami:80"
