@@ -6,7 +6,7 @@ services:
     volumes:
       - gotify_data:/app/data
     networks:
-      - internal_net
+      - internal
     ports:
       - 8080:80
 
@@ -18,7 +18,7 @@ services:
       - uptime_kuma_data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - internal_net
+      - internal
     ports:
       - 3001:3001
 
@@ -29,7 +29,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - internal_net
+      - internal
     ports:
       - 8888:8080
 
@@ -38,5 +38,5 @@ volumes:
   uptime_kuma_data:
 
 networks:
-  internal_net:
+  internal:
     external: true
