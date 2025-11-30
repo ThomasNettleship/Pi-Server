@@ -5,19 +5,16 @@ services:
     image: traefik:v3.1
     container_name: traefik
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    networks:
-      - internal
     ports:
       - "443:443"
       - "80:80"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./dynamic:/etc/traefik/dynamic:ro
+      - /srv/docker/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - /srv/docker/traefik/dynamic:/etc/traefik/dynamic:ro
+      - /srv/docker/traefik/acme.json:/acme.json
       - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
-      - ./acme.json:/acme.json
+    networks:
+      - internal
     environment:
       - CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
 
@@ -30,13 +27,28 @@ services:
 
   tunnel:
     image: cloudflare/cloudflared
-    container_name: cloudflared
+    container_name: cloudflared-tunnel
     restart: unless-stopped
     command: tunnel run
     networks:
       - internal
     environment:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+
+  adguard:
+    container_name: adguard
+    image: adguard/adguardhome:latest
+    restart: unless-stopped
+    networks:
+      - internal
+    ports:
+      - "53:53/tcp"       # DNS TCP
+      - "53:53/udp"       # DNS UDP
+      - "3000:3000"       # Setup
+      - "8080:80/tcp"     # Admin Dashboard
+    volumes:
+      - ./adguard/work:/opt/adguardhome/work
+      - ./adguard/conf:/opt/adguardhome/conf
 
 networks:
   internal:
