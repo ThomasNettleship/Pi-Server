@@ -1,0 +1,15 @@
+http:
+  routers:
+    gotify:
+      rule: "Host(`gotify.internal.nettleship.net`)"
+      entrypoints:
+        - websecure
+      service: gotify
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    gotify:
+      loadBalancer:
+        servers:
+          - url: "http://gotify:80"
