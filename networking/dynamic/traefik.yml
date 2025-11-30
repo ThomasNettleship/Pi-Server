@@ -1,0 +1,15 @@
+http:
+  routers:
+    traefik-dashboard:
+      rule: "Host(`traefik.internal.nettleship.net`)"
+      entrypoints:
+        - websecure
+      service: traefik
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    traefik:
+      loadBalancer:
+        servers:
+          - url: "http://traefik:8080"
