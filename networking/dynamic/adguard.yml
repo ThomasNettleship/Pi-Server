@@ -1,0 +1,15 @@
+http:
+  routers:
+    adguard:
+      rule: "Host(`adguard.internal.nettleship.net`)"
+      entrypoints:
+        - websecure
+      service: adguard
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    adguard:
+      loadBalancer:
+        servers:
+          - url: "http://adguard:80"
